@@ -22,60 +22,6 @@ function validateSearch(searchTerm) {
     return true;
 }
 
-// Hantera när formuläret skickas.
-searchForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    console.log("Formuläret fungerar!");
-
-    // Läs sökfrasen och ta bort extra mellanslag.
-    const searchTerm = searchInput.value.trim();
-
-    // Kontrollera sökfrasen.
-    if (!validateSearch(searchTerm)) {
-        return;
-    }
-
-   // Hämta recept från API:t med användarens sökfras.
-document.querySelector("#message").textContent = "";
-await fetchRecipes(searchTerm);
-
-
-    const url = `https://dummyjson.com/recipes/search?q=${encodeURIComponent(searchTerm)}`;
-
-    try {
-        // Skicka ett anrop till API:t.
-        const response = await fetch(url);
-
-        // Kontrollera om servern svarade med ett fel.
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-        }
-
-        // Omvandla svaret från JSON till ett JavaScript-objekt.
-        const data = await response.json();
-
-        // Skriv ut resultatet i konsolen så att vi kan undersöka datan.
-        console.log("API response:", data);
-
-        // Kontrollera om det finns några recept.
-        if (!data.recipes || data.recipes.length === 0) {
-            document.querySelector("#message").textContent =
-                "No recipes found. Please try another search term.";
-            return;
-        }
-
-        // Visa bara det första receptet i konsolen i detta steg.
-      displayRecipe(data.recipes[0]);
-
-    } catch (error) {
-        // Visa teknisk information i konsolen och ett meddelande på sidan.
-        console.error("Error fetching recipes:", error);
-
-        document.querySelector("#message").textContent =
-            "Could not fetch recipes. Please try again.";
-    }
-
-});
 
 // Hämtar recept från DummyJSON med användarens sökfras.
 async function fetchRecipes(searchTerm) {
@@ -103,10 +49,7 @@ async function fetchRecipes(searchTerm) {
         }
 
         // Visa det första receptet i konsolen under testet.
-        console.log("First recipe:", data.recipes[0]);
-
-        document.querySelector("#message").textContent =
-            `Recipe found: ${data.recipes[0].name}`;
+       displayRecipe(data.recipes[0]);
 
     } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -196,3 +139,24 @@ function displayRecipe(recipe) {
     // Lägg till det färdiga receptet på webbsidan.
     recipeSection.appendChild(article);
 }
+
+/**
+ * Hanterar formuläret när användaren söker efter ett recept.
+ */
+searchForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const searchTerm = searchInput.value.trim();
+
+    // Kontrollera att sökfrasen inte är tom.
+    if (!validateSearch(searchTerm)) {
+        return;
+    }
+
+    // Ta bort tidigare recept och meddelanden.
+    document.querySelector("#recipe").replaceChildren();
+    document.querySelector("#message").textContent = "";
+
+    // Hämta och visa det nya receptet.
+    await fetchRecipes(searchTerm);
+});
