@@ -25,6 +25,7 @@ function validateSearch(searchTerm) {
 
 // Hämtar recept från DummyJSON med användarens sökfras.
 async function fetchRecipes(searchTerm) {
+    document.querySelector("#message").textContent = "";
     document.querySelector("#message").textContent =
     "Searching for recipes...";
     const url = `https://dummyjson.com/recipes/search?q=${encodeURIComponent(searchTerm)}`;
