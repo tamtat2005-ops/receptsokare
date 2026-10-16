@@ -25,6 +25,8 @@ function validateSearch(searchTerm) {
 
 // Hämtar recept från DummyJSON med användarens sökfras.
 async function fetchRecipes(searchTerm) {
+    document.querySelector("#message").textContent =
+    "Searching for recipes...";
     const url = `https://dummyjson.com/recipes/search?q=${encodeURIComponent(searchTerm)}`;
 
     try {
@@ -49,6 +51,7 @@ async function fetchRecipes(searchTerm) {
         }
 
         // Visa det första receptet i konsolen under testet.
+        document.querySelector("#message").textContent = "";
        displayRecipe(data.recipes[0]);
 
     } catch (error) {
